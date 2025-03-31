@@ -56,21 +56,34 @@ public:
 
 protected:
   std::shared_ptr<rviz_common::ros_integration::RosNodeAbstractionIface> node_ptr_;
-  rclcpp::Publisher<std_msgs::msg::String>::SharedPtr publisher_;
-  rclcpp::Subscription<std_msgs::msg::String>::SharedPtr subscription_;
+  rclcpp::Publisher<std_msgs::msg::String>::SharedPtr publisher_command;
+  rclcpp::Subscription<std_msgs::msg::String>::SharedPtr subscription_rviz_text;
 
   void topicCallback(const std_msgs::msg::String& msg);
 
   QLabel * label_;
   QPushButton * button_make_collision;
   QPushButton * button_capture;
+  QPushButton * button_req_ism;
+  QPushButton * button_req_pem;
+
+  QPushButton * button_gripper_open;
+  QPushButton * button_gripper_close;
 
 private Q_SLOTS:
   void buttonActivatedMakeCollision();
 
 private Q_SLOTS:
   void buttonActivatedCapture();
+
+private Q_SLOTS:
+  void buttonReqISM();
+
+private Q_SLOTS:
+  void buttonReqPEM();
+
 };
+
 
 }  // namespace senior_rviz_panel
 

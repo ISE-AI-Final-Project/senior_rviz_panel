@@ -44,17 +44,28 @@ CommandPanel::CommandPanel(QWidget * parent) : Panel(parent)
 {
   // Create a label and a button, displayed vertically (the V in VBox means vertical)
   const auto layout = new QVBoxLayout(this);
-  label_ = new QLabel("Waiting for Command...");
-  button_make_collision = new QPushButton("Make Collision");
-  button_capture = new QPushButton("Capture");
+  label_ = new QLabel("Please start Main Node first.");
   layout->addWidget(label_);
-  layout->addWidget(button_capture);
-  layout->addWidget(button_make_collision);
 
-  // Connect the event of when the button is released to our callback,
-  // so pressing the button results in the callback being called.
-  QObject::connect(button_make_collision, &QPushButton::released, this, &CommandPanel::buttonActivatedMakeCollision);
+  button_capture = new QPushButton("Capture");
+  layout->addWidget(button_capture);
   QObject::connect(button_capture, &QPushButton::released, this, &CommandPanel::buttonActivatedCapture);
+
+  button_make_collision = new QPushButton("Make Collision");
+  layout->addWidget(button_make_collision);
+  QObject::connect(button_make_collision, &QPushButton::released, this, &CommandPanel::buttonActivatedMakeCollision);
+
+  // Same line
+  auto *hLayout = new QHBoxLayout();
+  button_req_ism = new QPushButton("Request ISM");
+  button_req_pem = new QPushButton("Request PEM");
+  hLayout->addWidget(button_req_ism);
+  hLayout->addWidget(button_req_pem);
+  layout->addLayout(hLayout);
+
+  QObject::connect(button_req_ism, &QPushButton::released, this, &CommandPanel::buttonReqISM);
+  QObject::connect(button_req_pem, &QPushButton::released, this, &CommandPanel::buttonReqPEM);
+
 }
 
 CommandPanel::~CommandPanel() = default;
@@ -68,9 +79,9 @@ void CommandPanel::onInitialize()
   // Get a pointer to the familiar rclcpp::Node for making subscriptions/publishers
   // (as per normal rclcpp code)
   rclcpp::Node::SharedPtr node = node_ptr_->get_raw_node();
-  publisher_ = node->create_publisher<std_msgs::msg::String>("/main_command", 10);
-  subscription_ = node->create_subscription<std_msgs::msg::String>(
-      "/input", 10, std::bind(&CommandPanel::topicCallback, this, std::placeholders::_1));
+  publisher_command = node->create_publisher<std_msgs::msg::String>("/main/main_command", 10);
+  subscription_rviz_text = node->create_subscription<std_msgs::msg::String>(
+      "/main/rviz_text", 10, std::bind(&CommandPanel::topicCallback, this, std::placeholders::_1));
 }
 
 // When the subscriber gets a message, this callback is triggered,
@@ -86,7 +97,7 @@ void CommandPanel::buttonActivatedMakeCollision()
 {
   auto message = std_msgs::msg::String();
   message.data = "make_collision";
-  publisher_->publish(message);
+  publisher_command->publish(message);
   label_->setText("Making Collision...");
 }
 
@@ -94,8 +105,24 @@ void CommandPanel::buttonActivatedCapture()
 {
   auto message = std_msgs::msg::String();
   message.data = "capture";
-  publisher_->publish(message);
+  publisher_command->publish(message);
   label_->setText("Capturing RGB and Depth...");
+}
+
+void CommandPanel::buttonReqISM()
+{
+  auto message = std_msgs::msg::String();
+  message.data = "req_ism";
+  publisher_command->publish(message);
+  label_->setText("Requesting ISM...");
+}
+
+void CommandPanel::buttonReqPEM()
+{
+  auto message = std_msgs::msg::String();
+  message.data = "req_pem";
+  publisher_command->publish(message);
+  label_->setText("Requesting PEM...");
 }
 
 }  // namespace senior_rviz_panel
