@@ -36,27 +36,30 @@
 
 #include <QVBoxLayout>
 #include <rviz_common/display_context.hpp>
-#include <rviz_panel_tutorial/demo_panel.hpp>
+#include <senior_rviz_panel/command_panel.hpp>
 
-namespace rviz_panel_tutorial
+namespace senior_rviz_panel
 {
-DemoPanel::DemoPanel(QWidget * parent) : Panel(parent)
+CommandPanel::CommandPanel(QWidget * parent) : Panel(parent)
 {
   // Create a label and a button, displayed vertically (the V in VBox means vertical)
   const auto layout = new QVBoxLayout(this);
-  label_ = new QLabel("[no data]");
-  button_ = new QPushButton("GO!");
+  label_ = new QLabel("Waiting for Command...");
+  button_make_collision = new QPushButton("Make Collision");
+  button_capture = new QPushButton("Capture");
   layout->addWidget(label_);
-  layout->addWidget(button_);
+  layout->addWidget(button_capture);
+  layout->addWidget(button_make_collision);
 
   // Connect the event of when the button is released to our callback,
   // so pressing the button results in the callback being called.
-  QObject::connect(button_, &QPushButton::released, this, &DemoPanel::buttonActivated);
+  QObject::connect(button_make_collision, &QPushButton::released, this, &CommandPanel::buttonActivatedMakeCollision);
+  QObject::connect(button_capture, &QPushButton::released, this, &CommandPanel::buttonActivatedCapture);
 }
 
-DemoPanel::~DemoPanel() = default;
+CommandPanel::~CommandPanel() = default;
 
-void DemoPanel::onInitialize()
+void CommandPanel::onInitialize()
 {
   // Access the abstract ROS Node and
   // in the process lock it for exclusive use until the method is done.
@@ -65,28 +68,37 @@ void DemoPanel::onInitialize()
   // Get a pointer to the familiar rclcpp::Node for making subscriptions/publishers
   // (as per normal rclcpp code)
   rclcpp::Node::SharedPtr node = node_ptr_->get_raw_node();
-  publisher_ = node->create_publisher<std_msgs::msg::String>("/output", 10);
+  publisher_ = node->create_publisher<std_msgs::msg::String>("/main_command", 10);
   subscription_ = node->create_subscription<std_msgs::msg::String>(
-      "/input", 10, std::bind(&DemoPanel::topicCallback, this, std::placeholders::_1));
+      "/input", 10, std::bind(&CommandPanel::topicCallback, this, std::placeholders::_1));
 }
 
 // When the subscriber gets a message, this callback is triggered,
 // and then we copy its data into the widget's label
-void DemoPanel::topicCallback(const std_msgs::msg::String& msg)
+void CommandPanel::topicCallback(const std_msgs::msg::String& msg)
 {
   label_->setText(QString(msg.data.c_str()));
 }
 
 // When the widget's button is pressed, this callback is triggered,
 // and then we publish a new message on our topic.
-void DemoPanel::buttonActivated()
+void CommandPanel::buttonActivatedMakeCollision()
 {
   auto message = std_msgs::msg::String();
-  message.data = "Button clicked!";
+  message.data = "make_collision";
   publisher_->publish(message);
+  label_->setText("Making Collision...");
 }
 
-}  // namespace rviz_panel_tutorial
+void CommandPanel::buttonActivatedCapture()
+{
+  auto message = std_msgs::msg::String();
+  message.data = "capture";
+  publisher_->publish(message);
+  label_->setText("Capturing RGB and Depth...");
+}
+
+}  // namespace senior_rviz_panel
 
 #include <pluginlib/class_list_macros.hpp>
-PLUGINLIB_EXPORT_CLASS(rviz_panel_tutorial::DemoPanel, rviz_common::Panel)
+PLUGINLIB_EXPORT_CLASS(senior_rviz_panel::CommandPanel, rviz_common::Panel)

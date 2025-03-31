@@ -34,8 +34,8 @@
 
 /* Author: David V. Lu!! */
 
-#ifndef RVIZ_PANEL_TUTORIAL__DEMO_PANEL_HPP_
-#define RVIZ_PANEL_TUTORIAL__DEMO_PANEL_HPP_
+#ifndef SENIOR_RVIZ_PANEL__COMMAND_PANEL_HPP_
+#define SENIOR_RVIZ_PANEL__COMMAND_PANEL_HPP_
 
 #include <QLabel>
 #include <QPushButton>
@@ -43,14 +43,14 @@
 #include <rviz_common/ros_integration/ros_node_abstraction_iface.hpp>
 #include <std_msgs/msg/string.hpp>
 
-namespace rviz_panel_tutorial
+namespace senior_rviz_panel
 {
-class DemoPanel : public rviz_common::Panel
+class CommandPanel : public rviz_common::Panel
 {
   Q_OBJECT
 public:
-  explicit DemoPanel(QWidget * parent = 0);
-  ~DemoPanel() override;
+  explicit CommandPanel(QWidget * parent = 0);
+  ~CommandPanel() override;
 
   void onInitialize() override;
 
@@ -62,12 +62,16 @@ protected:
   void topicCallback(const std_msgs::msg::String& msg);
 
   QLabel * label_;
-  QPushButton * button_;
+  QPushButton * button_make_collision;
+  QPushButton * button_capture;
 
 private Q_SLOTS:
-  void buttonActivated();
+  void buttonActivatedMakeCollision();
+
+private Q_SLOTS:
+  void buttonActivatedCapture();
 };
 
-}  // namespace rviz_panel_tutorial
+}  // namespace senior_rviz_panel
 
-#endif  // RVIZ_PANEL_TUTORIAL__DEMO_PANEL_HPP_
+#endif  // SENIOR_RVIZ_PANEL__COMMAND_PANEL_HPP_

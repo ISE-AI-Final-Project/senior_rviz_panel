@@ -1,10 +1,10 @@
 <?xml version="1.0"?>
 <?xml-model href="http://download.ros.org/schema/package_format3.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
 <package format="3">
-  <name>rviz_panel_tutorial</name>
+  <name>senior_rviz_panel</name>
   <version>0.0.0</version>
-  <description>RViz Panel Tutorial</description>
-  <maintainer email="davidvlu@gmail.com">David V. Lu!!</maintainer>
+  <description>RViz Panel for Senior Project</description>
+  <maintainer email="ice.tennison@gmail.com">icetenny</maintainer>
   <license>BSD</license>
 
   <buildtool_depend>ament_cmake</buildtool_depend>
