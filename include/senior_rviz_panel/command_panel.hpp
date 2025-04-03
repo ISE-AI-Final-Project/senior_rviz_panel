@@ -62,26 +62,20 @@ protected:
   void topicCallback(const std_msgs::msg::String& msg);
 
   QLabel * label_;
-  QPushButton * button_make_collision;
   QPushButton * button_capture;
   QPushButton * button_req_ism;
   QPushButton * button_req_pem;
+  QPushButton * button_make_collision;
+
+  QPushButton * button_generate_all_grasp;
+  QPushButton * button_generate_best_grasp;
+  QPushButton * button_publish_goal;
 
   QPushButton * button_gripper_open;
   QPushButton * button_gripper_close;
 
 private Q_SLOTS:
-  void buttonActivatedMakeCollision();
-
-private Q_SLOTS:
-  void buttonActivatedCapture();
-
-private Q_SLOTS:
-  void buttonReqISM();
-
-private Q_SLOTS:
-  void buttonReqPEM();
-
+  void buttonActivated(const std::string &command, const QString &label_text);
 };
 
 

@@ -49,23 +49,60 @@ CommandPanel::CommandPanel(QWidget * parent) : Panel(parent)
 
   button_capture = new QPushButton("Capture");
   layout->addWidget(button_capture);
-  QObject::connect(button_capture, &QPushButton::released, this, &CommandPanel::buttonActivatedCapture);
+  QObject::connect(button_capture, &QPushButton::released, this,
+                   [this]() { buttonActivated("capture", "Capturing RGB and Depth..."); });
 
-  button_make_collision = new QPushButton("Make Collision");
-  layout->addWidget(button_make_collision);
-  QObject::connect(button_make_collision, &QPushButton::released, this, &CommandPanel::buttonActivatedMakeCollision);
 
   // Same line
-  auto *hLayout = new QHBoxLayout();
+  auto * hLayout = new QHBoxLayout();
   button_req_ism = new QPushButton("Request ISM");
   button_req_pem = new QPushButton("Request PEM");
   hLayout->addWidget(button_req_ism);
   hLayout->addWidget(button_req_pem);
   layout->addLayout(hLayout);
 
-  QObject::connect(button_req_ism, &QPushButton::released, this, &CommandPanel::buttonReqISM);
-  QObject::connect(button_req_pem, &QPushButton::released, this, &CommandPanel::buttonReqPEM);
+  QObject::connect(button_req_ism, &QPushButton::released, this,
+                   [this]() { buttonActivated("req_ism", "Requesting ISM..."); });
+  QObject::connect(button_req_pem, &QPushButton::released, this,
+                   [this]() { buttonActivated("req_pem", "Requesting PEM..."); });
 
+                   
+  // Same line
+  auto * hLayout2 = new QHBoxLayout();
+  button_generate_all_grasp = new QPushButton("Gen All Grasp");
+  button_generate_best_grasp = new QPushButton("Gen Best Grasp");
+  hLayout2->addWidget(button_generate_all_grasp);
+  hLayout2->addWidget(button_generate_best_grasp);
+  layout->addLayout(hLayout2);
+
+  QObject::connect(button_generate_all_grasp, &QPushButton::released, this,
+                   [this]() { buttonActivated("generate_all_grasp", "Generating All Grasp Pose..."); });
+  QObject::connect(button_generate_best_grasp, &QPushButton::released, this,
+                   [this]() { buttonActivated("generate_best_grasp", "Generating Best Grasp Pose..."); });
+
+  button_make_collision = new QPushButton("Make Collision");
+  layout->addWidget(button_make_collision);
+  QObject::connect(button_make_collision, &QPushButton::released, this,
+                   [this]() { buttonActivated("make_collision", "Making Collision..."); });
+
+
+  button_publish_goal = new QPushButton("Publish Goal");
+  layout->addWidget(button_publish_goal);
+  QObject::connect(button_publish_goal, &QPushButton::released, this,
+                   [this]() { buttonActivated("publish_goal", "Publishing Goal..."); });
+
+  // Same line
+  auto * hLayout3 = new QHBoxLayout();
+  button_gripper_open = new QPushButton("Gripper Open");
+  button_gripper_close = new QPushButton("Gripper Close");
+  hLayout3->addWidget(button_gripper_open);
+  hLayout3->addWidget(button_gripper_close);
+  layout->addLayout(hLayout3);
+
+  QObject::connect(button_gripper_open, &QPushButton::released, this,
+                   [this]() { buttonActivated("gripper_open", "Opening Gripper..."); });
+  QObject::connect(button_gripper_close, &QPushButton::released, this,
+                   [this]() { buttonActivated("gripper_close", "Closing Gripper..."); });
 }
 
 CommandPanel::~CommandPanel() = default;
@@ -91,38 +128,12 @@ void CommandPanel::topicCallback(const std_msgs::msg::String& msg)
   label_->setText(QString(msg.data.c_str()));
 }
 
-// When the widget's button is pressed, this callback is triggered,
-// and then we publish a new message on our topic.
-void CommandPanel::buttonActivatedMakeCollision()
+void CommandPanel::buttonActivated(const std::string& command, const QString& label_text)
 {
   auto message = std_msgs::msg::String();
-  message.data = "make_collision";
+  message.data = command;
   publisher_command->publish(message);
-  label_->setText("Making Collision...");
-}
-
-void CommandPanel::buttonActivatedCapture()
-{
-  auto message = std_msgs::msg::String();
-  message.data = "capture";
-  publisher_command->publish(message);
-  label_->setText("Capturing RGB and Depth...");
-}
-
-void CommandPanel::buttonReqISM()
-{
-  auto message = std_msgs::msg::String();
-  message.data = "req_ism";
-  publisher_command->publish(message);
-  label_->setText("Requesting ISM...");
-}
-
-void CommandPanel::buttonReqPEM()
-{
-  auto message = std_msgs::msg::String();
-  message.data = "req_pem";
-  publisher_command->publish(message);
-  label_->setText("Requesting PEM...");
+  label_->setText(label_text);
 }
 
 }  // namespace senior_rviz_panel
