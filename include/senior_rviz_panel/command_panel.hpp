@@ -63,6 +63,7 @@ protected:
   void topicCallback(const std_msgs::msg::String& msg);
 
   QLabel * label_;
+  QLabel * label_target_object;
   QPushButton * button_capture;
   QPushButton * button_req_ism;
   QPushButton * button_req_pem;

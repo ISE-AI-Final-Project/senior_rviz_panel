@@ -54,9 +54,14 @@ CommandPanel::CommandPanel(QWidget * parent) : Panel(parent)
   QObject::connect(button_capture, &QPushButton::released, this,
                    [this]() { buttonActivated("capture", "Capturing RGB and Depth..."); });
 
+  // Same line
+  auto * hLayout_target_object = new QHBoxLayout();
   dropdown_target_obj_ = new QComboBox(this);
   dropdown_target_obj_->addItems({"sunscreen", "acnewash", "cereal2"});
-  layout->addWidget(dropdown_target_obj_);
+  label_target_object = new QLabel("Target Object:");
+  hLayout_target_object->addWidget(label_target_object);
+  hLayout_target_object->addWidget(dropdown_target_obj_);
+  layout->addLayout(hLayout_target_object);
 
   QObject::connect(dropdown_target_obj_, &QComboBox::currentTextChanged, this,
                    &CommandPanel::onTargetObjChanged);
