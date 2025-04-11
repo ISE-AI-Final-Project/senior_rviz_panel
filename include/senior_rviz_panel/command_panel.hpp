@@ -69,7 +69,16 @@ protected:
 
   QPushButton * button_generate_all_grasp;
   QPushButton * button_generate_best_grasp;
-  QPushButton * button_publish_goal;
+
+  QPushButton * button_plan_goal;
+  QPushButton * button_trigger_goal;
+
+  QPushButton * button_plan_grip;
+  QPushButton * button_trigger_grip;
+
+  QPushButton * button_plan_home;
+  QPushButton * button_trigger_home;
+
 
   QPushButton * button_gripper_open;
   QPushButton * button_gripper_close;

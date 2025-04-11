@@ -85,19 +85,52 @@ CommandPanel::CommandPanel(QWidget * parent) : Panel(parent)
   QObject::connect(button_make_collision, &QPushButton::released, this,
                    [this]() { buttonActivated("make_collision", "Making Collision..."); });
 
+  // Same Line 
+  auto * hLayout3 = new QHBoxLayout();
+  button_plan_goal = new QPushButton("Plan Goal");
+  button_trigger_goal = new QPushButton("Trigger Goal");
+  hLayout3->addWidget(button_plan_goal);
+  hLayout3->addWidget(button_trigger_goal);
+  layout->addLayout(hLayout3);
 
-  button_publish_goal = new QPushButton("Publish Goal");
-  layout->addWidget(button_publish_goal);
-  QObject::connect(button_publish_goal, &QPushButton::released, this,
-                   [this]() { buttonActivated("publish_goal", "Publishing Goal..."); });
+  QObject::connect(button_plan_goal, &QPushButton::released, this,
+                   [this]() { buttonActivated("plan_goal", "Planning Goal..."); });
+  QObject::connect(button_trigger_goal, &QPushButton::released, this,
+                   [this]() { buttonActivated("trigger_goal", "Triggering Goal..."); });
+
+  // Same Line 
+  auto * hLayout5 = new QHBoxLayout();
+  button_plan_grip = new QPushButton("Plan Grip");
+  button_trigger_grip = new QPushButton("Trigger Grip");
+  hLayout5->addWidget(button_plan_grip);
+  hLayout5->addWidget(button_trigger_grip);
+  layout->addLayout(hLayout5);
+
+  QObject::connect(button_plan_grip, &QPushButton::released, this,
+                   [this]() { buttonActivated("plan_grip", "Planning Grip..."); });
+  QObject::connect(button_trigger_grip, &QPushButton::released, this,
+                   [this]() { buttonActivated("trigger_grip", "Triggering Grip..."); });
+
+  // Same Line 
+  auto * hLayout6 = new QHBoxLayout();
+  button_plan_home = new QPushButton("Plan Home");
+  button_trigger_home = new QPushButton("Trigger Home");
+  hLayout6->addWidget(button_plan_home);
+  hLayout6->addWidget(button_trigger_home);
+  layout->addLayout(hLayout6);
+
+  QObject::connect(button_plan_home, &QPushButton::released, this,
+                   [this]() { buttonActivated("plan_home", "Planning Home..."); });
+  QObject::connect(button_trigger_home, &QPushButton::released, this,
+                   [this]() { buttonActivated("trigger_home", "Triggering Home..."); });
 
   // Same line
-  auto * hLayout3 = new QHBoxLayout();
+  auto * hLayout4 = new QHBoxLayout();
   button_gripper_open = new QPushButton("Gripper Open");
   button_gripper_close = new QPushButton("Gripper Close");
-  hLayout3->addWidget(button_gripper_open);
-  hLayout3->addWidget(button_gripper_close);
-  layout->addLayout(hLayout3);
+  hLayout4->addWidget(button_gripper_open);
+  hLayout4->addWidget(button_gripper_close);
+  layout->addLayout(hLayout4);
 
   QObject::connect(button_gripper_open, &QPushButton::released, this,
                    [this]() { buttonActivated("gripper_open", "Opening Gripper..."); });
