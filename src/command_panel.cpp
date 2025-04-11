@@ -35,6 +35,8 @@
 /* Author: David V. Lu!! */
 
 #include <QVBoxLayout>
+#include <rcl_interfaces/srv/set_parameters.hpp>
+#include <rclcpp/rclcpp.hpp>
 #include <rviz_common/display_context.hpp>
 #include <senior_rviz_panel/command_panel.hpp>
 
@@ -52,6 +54,12 @@ CommandPanel::CommandPanel(QWidget * parent) : Panel(parent)
   QObject::connect(button_capture, &QPushButton::released, this,
                    [this]() { buttonActivated("capture", "Capturing RGB and Depth..."); });
 
+  dropdown_target_obj_ = new QComboBox(this);
+  dropdown_target_obj_->addItems({"sunscreen", "acnewash", "cereal2"});
+  layout->addWidget(dropdown_target_obj_);
+
+  QObject::connect(dropdown_target_obj_, &QComboBox::currentTextChanged, this,
+                   &CommandPanel::onTargetObjChanged);
 
   // Same line
   auto * hLayout = new QHBoxLayout();
@@ -66,7 +74,6 @@ CommandPanel::CommandPanel(QWidget * parent) : Panel(parent)
   QObject::connect(button_req_pem, &QPushButton::released, this,
                    [this]() { buttonActivated("req_pem", "Requesting PEM..."); });
 
-                   
   // Same line
   auto * hLayout2 = new QHBoxLayout();
   button_generate_all_grasp = new QPushButton("Gen All Grasp");
@@ -75,17 +82,19 @@ CommandPanel::CommandPanel(QWidget * parent) : Panel(parent)
   hLayout2->addWidget(button_generate_best_grasp);
   layout->addLayout(hLayout2);
 
-  QObject::connect(button_generate_all_grasp, &QPushButton::released, this,
-                   [this]() { buttonActivated("generate_all_grasp", "Generating All Grasp Pose..."); });
-  QObject::connect(button_generate_best_grasp, &QPushButton::released, this,
-                   [this]() { buttonActivated("generate_best_grasp", "Generating Best Grasp Pose..."); });
+  QObject::connect(button_generate_all_grasp, &QPushButton::released, this, [this]() {
+    buttonActivated("generate_all_grasp", "Generating All Grasp Pose...");
+  });
+  QObject::connect(button_generate_best_grasp, &QPushButton::released, this, [this]() {
+    buttonActivated("generate_best_grasp", "Generating Best Grasp Pose...");
+  });
 
   button_make_collision = new QPushButton("Make Collision");
   layout->addWidget(button_make_collision);
   QObject::connect(button_make_collision, &QPushButton::released, this,
                    [this]() { buttonActivated("make_collision", "Making Collision..."); });
 
-  // Same Line 
+  // Same Line
   auto * hLayout3 = new QHBoxLayout();
   button_plan_goal = new QPushButton("Plan Goal");
   button_trigger_goal = new QPushButton("Trigger Goal");
@@ -98,7 +107,7 @@ CommandPanel::CommandPanel(QWidget * parent) : Panel(parent)
   QObject::connect(button_trigger_goal, &QPushButton::released, this,
                    [this]() { buttonActivated("trigger_goal", "Triggering Goal..."); });
 
-  // Same Line 
+  // Same Line
   auto * hLayout5 = new QHBoxLayout();
   button_plan_grip = new QPushButton("Plan Grip");
   button_trigger_grip = new QPushButton("Trigger Grip");
@@ -111,7 +120,7 @@ CommandPanel::CommandPanel(QWidget * parent) : Panel(parent)
   QObject::connect(button_trigger_grip, &QPushButton::released, this,
                    [this]() { buttonActivated("trigger_grip", "Triggering Grip..."); });
 
-  // Same Line 
+  // Same Line
   auto * hLayout6 = new QHBoxLayout();
   button_plan_home = new QPushButton("Plan Home");
   button_trigger_home = new QPushButton("Trigger Home");
@@ -167,6 +176,34 @@ void CommandPanel::buttonActivated(const std::string& command, const QString& la
   message.data = command;
   publisher_command->publish(message);
   label_->setText(label_text);
+}
+
+void CommandPanel::onTargetObjChanged(const QString& text) { sendTargetObjParam(text); }
+
+void CommandPanel::sendTargetObjParam(const QString& target)
+{
+  auto node = rclcpp::Node::make_shared("rviz_set_param_client");
+  auto client =
+      node->create_client<rcl_interfaces::srv::SetParameters>("/main/set_parameters");
+
+  if (!client->wait_for_service(std::chrono::seconds(1))) {
+    RCLCPP_WARN(node->get_logger(), "Service not available.");
+    label_->setText(QString("Main Node not available. Failed to set param."));
+    return;
+  }
+
+  auto request = std::make_shared<rcl_interfaces::srv::SetParameters::Request>();
+  rcl_interfaces::msg::Parameter param;
+  param.name = "target_obj";
+  param.value.type = rcl_interfaces::msg::ParameterType::PARAMETER_STRING;
+  param.value.string_value = target.toStdString();
+  request->parameters.push_back(param);
+
+  auto future = client->async_send_request(request);
+  if (rclcpp::spin_until_future_complete(node, future) == rclcpp::FutureReturnCode::SUCCESS) {
+    RCLCPP_INFO(node->get_logger(), "Param set to: %s", target.toStdString().c_str());
+    label_->setText(QString("Target Object set to: %1").arg(target));
+  }
 }
 
 }  // namespace senior_rviz_panel

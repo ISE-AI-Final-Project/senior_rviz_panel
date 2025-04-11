@@ -37,6 +37,7 @@
 #ifndef SENIOR_RVIZ_PANEL__COMMAND_PANEL_HPP_
 #define SENIOR_RVIZ_PANEL__COMMAND_PANEL_HPP_
 
+#include <QComboBox>
 #include <QLabel>
 #include <QPushButton>
 #include <rviz_common/panel.hpp>
@@ -79,14 +80,17 @@ protected:
   QPushButton * button_plan_home;
   QPushButton * button_trigger_home;
 
-
   QPushButton * button_gripper_open;
   QPushButton * button_gripper_close;
 
-private Q_SLOTS:
-  void buttonActivated(const std::string &command, const QString &label_text);
-};
+  QComboBox * dropdown_target_obj_;
+  void sendTargetObjParam(const QString &target);
 
+private Q_SLOTS:
+  void buttonActivated(const std::string& command, const QString& label_text);
+
+  void onTargetObjChanged(const QString &text);
+};
 
 }  // namespace senior_rviz_panel
 
