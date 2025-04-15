@@ -72,8 +72,8 @@ protected:
   QPushButton * button_generate_all_grasp;
   QPushButton * button_generate_best_grasp;
 
-  QPushButton * button_plan_goal;
-  QPushButton * button_trigger_goal;
+  QPushButton * button_plan_aim;
+  QPushButton * button_trigger_aim;
 
   QPushButton * button_plan_grip;
   QPushButton * button_trigger_grip;
@@ -83,6 +83,9 @@ protected:
 
   QPushButton * button_gripper_open;
   QPushButton * button_gripper_close;
+
+  QPushButton * button_fake_point_cloud;
+  QPushButton * button_fake_object_pose;
 
   QComboBox * dropdown_target_obj_;
   void sendTargetObjParam(const QString &target);

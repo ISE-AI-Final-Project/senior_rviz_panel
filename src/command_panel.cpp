@@ -101,16 +101,16 @@ CommandPanel::CommandPanel(QWidget * parent) : Panel(parent)
 
   // Same Line
   auto * hLayout3 = new QHBoxLayout();
-  button_plan_goal = new QPushButton("Plan Goal");
-  button_trigger_goal = new QPushButton("Trigger Goal");
-  hLayout3->addWidget(button_plan_goal);
-  hLayout3->addWidget(button_trigger_goal);
+  button_plan_aim = new QPushButton("Plan Aim");
+  button_trigger_aim = new QPushButton("Trigger Aim");
+  hLayout3->addWidget(button_plan_aim);
+  hLayout3->addWidget(button_trigger_aim);
   layout->addLayout(hLayout3);
 
-  QObject::connect(button_plan_goal, &QPushButton::released, this,
-                   [this]() { buttonActivated("plan_goal", "Planning Goal..."); });
-  QObject::connect(button_trigger_goal, &QPushButton::released, this,
-                   [this]() { buttonActivated("trigger_goal", "Triggering Goal..."); });
+  QObject::connect(button_plan_aim, &QPushButton::released, this,
+                   [this]() { buttonActivated("plan_aim", "Planning Aim..."); });
+  QObject::connect(button_trigger_aim, &QPushButton::released, this,
+                   [this]() { buttonActivated("trigger_aim", "Triggering Aim..."); });
 
   // Same Line
   auto * hLayout5 = new QHBoxLayout();
@@ -150,6 +150,19 @@ CommandPanel::CommandPanel(QWidget * parent) : Panel(parent)
                    [this]() { buttonActivated("gripper_open", "Opening Gripper..."); });
   QObject::connect(button_gripper_close, &QPushButton::released, this,
                    [this]() { buttonActivated("gripper_close", "Closing Gripper..."); });
+
+  // Same line
+  auto * hLayout7 = new QHBoxLayout();
+  button_fake_point_cloud = new QPushButton("Fake Point Cloud");
+  button_fake_object_pose = new QPushButton("Fake Object Pose");
+  hLayout7->addWidget(button_fake_point_cloud);
+  hLayout7->addWidget(button_fake_object_pose);
+  layout->addLayout(hLayout7);
+
+  QObject::connect(button_fake_point_cloud, &QPushButton::released, this,
+                   [this]() { buttonActivated("fake_point_cloud", "Fake Point Cloud"); });
+  QObject::connect(button_fake_object_pose, &QPushButton::released, this,
+                   [this]() { buttonActivated("fake_object_pose", "Fake Object Pose"); });
 }
 
 CommandPanel::~CommandPanel() = default;
