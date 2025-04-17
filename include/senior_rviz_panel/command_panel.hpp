@@ -72,14 +72,16 @@ protected:
   QPushButton * button_generate_all_grasp;
   QPushButton * button_generate_best_grasp;
 
-  QPushButton * button_plan_aim;
-  QPushButton * button_trigger_aim;
+  QPushButton * button_plan_aim_grip;
 
-  QPushButton * button_plan_grip;
+  QPushButton * button_trigger_aim;
   QPushButton * button_trigger_grip;
 
   QPushButton * button_plan_home;
   QPushButton * button_trigger_home;
+
+  QPushButton * button_attach_obj;
+  QPushButton * button_detach_obj;
 
   QPushButton * button_gripper_open;
   QPushButton * button_gripper_close;
