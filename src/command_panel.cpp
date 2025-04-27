@@ -47,17 +47,38 @@ CommandPanel::CommandPanel(QWidget * parent) : Panel(parent)
   // Create a label and a button, displayed vertically (the V in VBox means vertical)
   const auto layout = new QVBoxLayout(this);
   label_ = new QLabel("Please start Main Node first.");
+  label_->setMaximumWidth(300);
   layout->addWidget(label_);
 
+  auto * hLayout10 = new QHBoxLayout();
   button_capture = new QPushButton("Capture");
-  layout->addWidget(button_capture);
+  button_capture_to_fuse = new QPushButton("Capture To Fuse");
+  hLayout10->addWidget(button_capture);
+  hLayout10->addWidget(button_capture_to_fuse);
+  layout->addLayout(hLayout10);
+
   QObject::connect(button_capture, &QPushButton::released, this,
                    [this]() { buttonActivated("capture", "Capturing RGB and Depth..."); });
+  QObject::connect(button_capture_to_fuse, &QPushButton::released, this, [this]() {
+    buttonActivated("capture_to_fuse", "Capturing RGB and Depth for Fusing...");
+  });
+
+  auto * hLayout9 = new QHBoxLayout();
+  button_fuse_pointcloud = new QPushButton("Fuse PointCloud");
+  button_clear_fuse_pointcloud = new QPushButton("Clear Fused PointCloud");
+  hLayout9->addWidget(button_fuse_pointcloud);
+  hLayout9->addWidget(button_clear_fuse_pointcloud);
+  layout->addLayout(hLayout9);
+
+  QObject::connect(button_fuse_pointcloud, &QPushButton::released, this,
+                   [this]() { buttonActivated("fuse_pointcloud", "Fuse PointCloud..."); });
+  QObject::connect(button_clear_fuse_pointcloud, &QPushButton::released, this,
+                   [this]() { buttonActivated("clear_pointcloud", "Clear PointCloud..."); });
 
   // Same line
   auto * hLayout_target_object = new QHBoxLayout();
   dropdown_target_obj_ = new QComboBox(this);
-  dropdown_target_obj_->addItems({"sunscreen", "acnewash", "cereal2"});
+  dropdown_target_obj_->addItems({"sunscreen", "acnewash", "cereal"});
   label_target_object = new QLabel("Target Object:");
   hLayout_target_object->addWidget(label_target_object);
   hLayout_target_object->addWidget(dropdown_target_obj_);
@@ -94,10 +115,28 @@ CommandPanel::CommandPanel(QWidget * parent) : Panel(parent)
     buttonActivated("generate_best_grasp", "Generating Best Grasp Pose...");
   });
 
+  auto * hLayout8 = new QHBoxLayout();
   button_make_collision = new QPushButton("Make Collision");
-  layout->addWidget(button_make_collision);
+  button_make_collision_with_mask = new QPushButton("Make Collision With Mask");
+  hLayout8->addWidget(button_make_collision);
+  hLayout8->addWidget(button_make_collision_with_mask);
+  layout->addLayout(hLayout8);
+
   QObject::connect(button_make_collision, &QPushButton::released, this,
                    [this]() { buttonActivated("make_collision", "Making Collision..."); });
+  QObject::connect(button_make_collision_with_mask, &QPushButton::released, this, [this]() {
+    buttonActivated("make_collision_with_mask", "Making Collision With Mask...");
+  });
+
+
+  auto * hLayout11 = new QHBoxLayout();
+  button_ik_grasp = new QPushButton("Filter Grasp by IK");
+  hLayout11->addWidget(button_ik_grasp);
+  layout->addLayout(hLayout11);
+
+  QObject::connect(button_ik_grasp, &QPushButton::released, this, [this]() {
+    buttonActivated("ik_grasp", "Filtering Grasp by IK...");
+  });
 
 
   button_plan_aim_grip = new QPushButton("Plan Aim and Grip");
@@ -107,7 +146,7 @@ CommandPanel::CommandPanel(QWidget * parent) : Panel(parent)
 
   // Same Line
   auto * hLayout3 = new QHBoxLayout();
-  
+
   button_trigger_aim = new QPushButton("Trigger Aim");
   button_trigger_grip = new QPushButton("Trigger Grip");
 
@@ -118,9 +157,7 @@ CommandPanel::CommandPanel(QWidget * parent) : Panel(parent)
   QObject::connect(button_trigger_aim, &QPushButton::released, this,
                    [this]() { buttonActivated("trigger_aim", "Triggering Aim..."); });
   QObject::connect(button_trigger_grip, &QPushButton::released, this,
-                  [this]() { buttonActivated("trigger_grip", "Triggering Grip..."); });
-
-
+                   [this]() { buttonActivated("trigger_grip", "Triggering Grip..."); });
 
   // Same Line
   auto * hLayout6 = new QHBoxLayout();
@@ -139,7 +176,7 @@ CommandPanel::CommandPanel(QWidget * parent) : Panel(parent)
   auto * hLayout5 = new QHBoxLayout();
   button_attach_obj = new QPushButton("Attach Object");
   button_detach_obj = new QPushButton("Detach Object");
-  
+
   hLayout5->addWidget(button_attach_obj);
   hLayout5->addWidget(button_detach_obj);
   layout->addLayout(hLayout5);
@@ -212,8 +249,7 @@ void CommandPanel::onTargetObjChanged(const QString& text) { sendTargetObjParam(
 void CommandPanel::sendTargetObjParam(const QString& target)
 {
   auto node = rclcpp::Node::make_shared("rviz_set_param_client");
-  auto client =
-      node->create_client<rcl_interfaces::srv::SetParameters>("/main/set_parameters");
+  auto client = node->create_client<rcl_interfaces::srv::SetParameters>("/main/set_parameters");
 
   if (!client->wait_for_service(std::chrono::seconds(1))) {
     RCLCPP_WARN(node->get_logger(), "Service not available.");

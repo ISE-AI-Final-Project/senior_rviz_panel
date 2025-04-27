@@ -65,12 +65,21 @@ protected:
   QLabel * label_;
   QLabel * label_target_object;
   QPushButton * button_capture;
+  QPushButton * button_capture_to_fuse;
+
+  QPushButton * button_fuse_pointcloud;
+  QPushButton * button_clear_fuse_pointcloud;
+
   QPushButton * button_req_ism;
   QPushButton * button_req_pem;
-  QPushButton * button_make_collision;
 
   QPushButton * button_generate_all_grasp;
   QPushButton * button_generate_best_grasp;
+
+  QPushButton * button_make_collision;
+  QPushButton * button_make_collision_with_mask;
+
+  QPushButton * button_ik_grasp;
 
   QPushButton * button_plan_aim_grip;
 
@@ -88,6 +97,7 @@ protected:
 
   QPushButton * button_fake_point_cloud;
   QPushButton * button_fake_object_pose;
+
 
   QComboBox * dropdown_target_obj_;
   void sendTargetObjParam(const QString &target);
