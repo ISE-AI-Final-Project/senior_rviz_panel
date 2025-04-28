@@ -251,7 +251,7 @@ void CommandPanel::onTargetObjChanged(const QString& text) { sendTargetObjParam(
 void CommandPanel::sendTargetObjParam(const QString& target)
 {
   auto node = rclcpp::Node::make_shared("rviz_set_param_client");
-  auto client = node->create_client<rcl_interfaces::srv::SetParameters>("/main/set_parameters");
+  auto client = node->create_client<rcl_interfaces::srv::SetParameters>("/main_node/set_parameters");
 
   if (!client->wait_for_service(std::chrono::seconds(1))) {
     RCLCPP_WARN(node->get_logger(), "Service not available.");
