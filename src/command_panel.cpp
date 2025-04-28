@@ -78,7 +78,9 @@ CommandPanel::CommandPanel(QWidget * parent) : Panel(parent)
   // Same line
   auto * hLayout_target_object = new QHBoxLayout();
   dropdown_target_obj_ = new QComboBox(this);
-  dropdown_target_obj_->addItems({"sunscreen", "acnewash", "cereal"});
+  dropdown_target_obj_->addItems(
+      {"acnewash", "cereal", "contactcleaning", "jbl", "lactose", "orange", "purple", "sunscreen"});
+  dropdown_target_obj_->setCurrentText("sunscreen");
   label_target_object = new QLabel("Target Object:");
   hLayout_target_object->addWidget(label_target_object);
   hLayout_target_object->addWidget(dropdown_target_obj_);

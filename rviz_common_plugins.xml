@@ -3,3 +3,11 @@
     <description>A very basic panel for a tutorial</description>
   </class>
 </library>
+
+<library path="label_panel">
+  <class type="senior_rviz_panel::LabelPanel" base_class_type="rviz_common::Panel">
+    <description>
+      A label panel for senior project.
+    </description>
+  </class>
+</library>
