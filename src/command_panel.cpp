@@ -52,24 +52,29 @@ CommandPanel::CommandPanel(QWidget * parent) : Panel(parent)
 
   auto * hLayout10 = new QHBoxLayout();
   button_capture = new QPushButton("Capture");
-  button_capture_to_fuse = new QPushButton("Capture To Fuse");
+  button_auto_fuse_pointcloud = new QPushButton("Auto Fuse");
+
   hLayout10->addWidget(button_capture);
-  hLayout10->addWidget(button_capture_to_fuse);
+  hLayout10->addWidget(button_auto_fuse_pointcloud);
   layout->addLayout(hLayout10);
 
   QObject::connect(button_capture, &QPushButton::released, this,
                    [this]() { buttonActivated("capture", "Capturing RGB and Depth..."); });
-  QObject::connect(button_capture_to_fuse, &QPushButton::released, this, [this]() {
-    buttonActivated("capture_to_fuse", "Capturing RGB and Depth for Fusing...");
-  });
+  QObject::connect(button_auto_fuse_pointcloud, &QPushButton::released, this,
+                   [this]() { buttonActivated("auto_fuse_pointcloud", "Automating Fusing PointCloud..."); });
 
   auto * hLayout9 = new QHBoxLayout();
-  button_fuse_pointcloud = new QPushButton("Fuse PointCloud");
-  button_clear_fuse_pointcloud = new QPushButton("Clear Fused PointCloud");
+  button_capture_to_fuse = new QPushButton("Capture To Fuse");
+  button_fuse_pointcloud = new QPushButton("Fuse PCL");
+  button_clear_fuse_pointcloud = new QPushButton("Clear Fused PCL");
+  hLayout9->addWidget(button_capture_to_fuse);
   hLayout9->addWidget(button_fuse_pointcloud);
   hLayout9->addWidget(button_clear_fuse_pointcloud);
   layout->addLayout(hLayout9);
 
+  QObject::connect(button_capture_to_fuse, &QPushButton::released, this, [this]() {
+    buttonActivated("capture_to_fuse", "Capturing RGB and Depth for Fusing...");
+  });
   QObject::connect(button_fuse_pointcloud, &QPushButton::released, this,
                    [this]() { buttonActivated("fuse_pointcloud", "Fuse PointCloud..."); });
   QObject::connect(button_clear_fuse_pointcloud, &QPushButton::released, this,

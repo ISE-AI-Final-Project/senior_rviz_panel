@@ -70,6 +70,8 @@ protected:
   QPushButton * button_fuse_pointcloud;
   QPushButton * button_clear_fuse_pointcloud;
 
+  QPushButton * button_auto_fuse_pointcloud;
+
   QPushButton * button_req_ism;
   QPushButton * button_req_pem;
 
